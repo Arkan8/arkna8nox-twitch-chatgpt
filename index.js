@@ -20,7 +20,7 @@ app.set('view engine', 'ejs');
 // Load environment variables
 const GPT_MODE = process.env.GPT_MODE || 'CHAT';
 const HISTORY_LENGTH = process.env.HISTORY_LENGTH || 10;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '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';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MODEL_NAME = process.env.MODEL_NAME || 'GPT-5 nano';
 const TWITCH_USER = process.env.TWITCH_USER || 'oSetinhasBot';
 const TWITCH_AUTH = process.env.TWITCH_AUTH || 'oauth:1v53t98jxbm1wckuevl8xg88qfj0sy';
