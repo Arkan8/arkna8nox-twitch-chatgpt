@@ -19,13 +19,13 @@ app.set('view engine', 'ejs');
 
 // Load environment variables
 const GPT_MODE = process.env.GPT_MODE || 'CHAT';
-const HISTORY_LENGTH = process.env.HISTORY_LENGTH || 5;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
-const MODEL_NAME = process.env.MODEL_NAME || 'gpt-3.5-turbo';
+const HISTORY_LENGTH = process.env.HISTORY_LENGTH || 10;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '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';
+const MODEL_NAME = process.env.MODEL_NAME || 'GPT-5 nano';
 const TWITCH_USER = process.env.TWITCH_USER || 'oSetinhasBot';
-const TWITCH_AUTH = process.env.TWITCH_AUTH || 'oauth:vgvx55j6qzz1lkt3cwggxki1lv53c2';
+const TWITCH_AUTH = process.env.TWITCH_AUTH || 'oauth:1v53t98jxbm1wckuevl8xg88qfj0sy';
 const COMMAND_NAME = process.env.COMMAND_NAME || '!gpt';
-const CHANNELS = process.env.CHANNELS || 'oSetinhas,jones88';
+const CHANNELS = process.env.CHANNELS || 'Arkan8Nox';
 const SEND_USERNAME = process.env.SEND_USERNAME || 'true';
 const ENABLE_TTS = process.env.ENABLE_TTS || 'false';
 const ENABLE_CHANNEL_POINTS = process.env.ENABLE_CHANNEL_POINTS || 'false';
