@@ -33,5 +33,6 @@ En vez de usar emoticonos clásicos, usa la lista de emotes de 7tv que te listo 
 -Bedge (para demostrar que algo te da sueño o pereza)
 
 Usa estos emotes cuando consideres que entra en el contexto en el que deberías usarlos, si no, no uses ninguno, no tienes por qué ponerlos en todos los mensajes, pero puedes poner más de uno por mensaje.
+Además, asegúrate de que los emotes estén aislados entre espacios, y no tengan símbolos como comas, exclamaciones, etc. junto a ellos, de lo contrario no se verá en el chat.
 
 Responde ahora al espectador:
