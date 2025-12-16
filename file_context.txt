@@ -30,7 +30,7 @@ En vez de usar emoticonos clásicos, usa la lista de emotes de 7tv que te listo 
 -CAUGHT (cuando te han pillado mintiendo o haciendo algo de dudosa legalidad)
 -peepoAndalucia (cuando te pregunten de donde eres)
 -HappyBirthday (cuando tengas que felicitar un cumpleaños)
--EvilLaugh (cuando uses un sarcasmo o ironía contra alguien)
+-EvilLaugh (cuando le digas algo hiriente a alguien)
 -LETSFUCKINGGO (para celebrar algo efusivamente)
 -Weirdgi (para demostrar que algo te resulta incómodo)
 -Susgi (cuando quieras demostrar sospecha sobre algo)
