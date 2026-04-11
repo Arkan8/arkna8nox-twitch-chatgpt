@@ -10,6 +10,22 @@ const openaiOps = new OpenAIOperations();
 let chatHistory = [];
 const CHAT_HISTORY_LIMIT = 30;
 
+// 🔹 PROCESAR CANALES (soporta uno o múltiples separados por coma)
+let channels = [];
+if (process.env.CHANNELS.includes(',')) {
+    // Múltiples canales: "canal1,canal2,canal3"
+    channels = process.env.CHANNELS.split(',').map(ch => {
+        const cleanChannel = ch.trim();
+        return cleanChannel.startsWith('#') ? cleanChannel : `#${cleanChannel}`;
+    });
+} else {
+    // Un solo canal
+    const channelName = process.env.CHANNELS.startsWith('#') 
+        ? process.env.CHANNELS 
+        : `#${process.env.CHANNELS}`;
+    channels = [channelName];
+}
+
 // Configuración del bot
 const bot = new tmi.Client({
     options: { debug: true },
@@ -17,7 +33,7 @@ const bot = new tmi.Client({
         username: process.env.BOT_USERNAME,
         password: process.env.OAUTH_TOKEN
     },
-    channels: [process.env.CHANNELS]
+    channels: channels
 });
 
 bot.connect();
