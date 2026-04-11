@@ -1,17 +1,25 @@
 import OpenAI from 'openai';
 
-const OpenAI = require("openai");
+// IMPORTANTE: Esta variable debe estar definida ANTES de importar este archivo
+// o debes pasar file_context como parámetro al constructor
+// Voy a asumir que file_context está disponible globalmente o lo pasamos como parámetro
+
+// Opción 1: Si file_context está en el ámbito global (definido en otro archivo)
+// Puedes usarlo directamente, pero es mejor pasarlo como parámetro
 
 class OpenAIOperations {
-    constructor() {
+    constructor(file_context = null) {
         this.openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY
         });
 
+        // Usar file_context si se proporciona, si no, usar un contexto por defecto
+        const systemContent = file_context
+
         this.messages = [
             {
                 role: "system",
-                content: file_context
+                content: systemContent
             }
         ];
 
@@ -47,6 +55,19 @@ class OpenAIOperations {
 
         return reply;
     }
+
+    // Método para actualizar el contexto del sistema si es necesario
+    updateSystemContext(newContext) {
+        if (this.messages.length > 0 && this.messages[0].role === "system") {
+            this.messages[0].content = newContext;
+        }
+    }
+
+    // Método para resetear el historial (manteniendo el contexto del sistema)
+    resetHistory() {
+        const systemMessage = this.messages[0];
+        this.messages = [systemMessage];
+    }
 }
 
-module.exports = OpenAIOperations;
+export default OpenAIOperations;
