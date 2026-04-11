@@ -1,73 +1,86 @@
-import OpenAI from 'openai';
+// Import modules
+import OpenAI from "openai";
 
-// IMPORTANTE: Esta variable debe estar definida ANTES de importar este archivo
-// o debes pasar file_context como parámetro al constructor
-// Voy a asumir que file_context está disponible globalmente o lo pasamos como parámetro
-
-// Opción 1: Si file_context está en el ámbito global (definido en otro archivo)
-// Puedes usarlo directamente, pero es mejor pasarlo como parámetro
-
-class OpenAIOperations {
-    constructor(file_context = null) {
+export class OpenAIOperations {
+    constructor(file_context, openai_key, model_name, history_length) {
+        this.messages = [{role: "system", content: file_context}];
         this.openai = new OpenAI({
-            apiKey: process.env.OPENAI_API_KEY
+            apiKey: openai_key,
         });
-
-        // Usar file_context si se proporciona, si no, usar un contexto por defecto
-        const systemContent = file_context
-
-        this.messages = [
-            {
-                role: "system",
-                content: systemContent
-            }
-        ];
-
-        this.MAX_HISTORY = 20;
+        this.model_name = model_name;
+        this.history_length = history_length;
     }
 
-    // 🔹 LIMPIAR HISTORIAL SI CRECE MUCHO
     check_history_length() {
-        if (this.messages.length > this.MAX_HISTORY) {
-            this.messages.splice(1, 1); // mantiene el system
+        // Use template literals to concatenate strings
+        console.log(`Conversations in History: ${((this.messages.length / 2) -1)}/${this.history_length}`);
+        if(this.messages.length > ((this.history_length * 2) + 1)) {
+            console.log('Message amount in history exceeded. Removing oldest user and agent messages.');
+            this.messages.splice(1,2);
         }
     }
 
-    async make_openai_call(userMessage) {
-        this.messages.push({
-            role: "user",
-            content: userMessage
-        });
+    async make_openai_call(text) {
+        try {
+            //Add user message to  messages
+            this.messages.push({role: "user", content: text});
 
-        this.check_history_length();
+            //Check if message history is exceeded
+            this.check_history_length();
 
-        const completion = await this.openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: this.messages,
-        });
+            // Use await to get the response from openai
+            const response = await this.openai.chat.completions.create({
+                model: this.model_name,
+                messages: this.messages,
+                temperature: 1,
+                max_completion_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0,
+            });
 
-        const reply = completion.choices[0].message.content;
-
-        this.messages.push({
-            role: "assistant",
-            content: reply
-        });
-
-        return reply;
-    }
-
-    // Método para actualizar el contexto del sistema si es necesario
-    updateSystemContext(newContext) {
-        if (this.messages.length > 0 && this.messages[0].role === "system") {
-            this.messages[0].content = newContext;
+            // Check if response has choices
+            if (response.choices) {
+                let agent_response = response.choices[0].message.content;
+                console.log(`Agent Response: ${agent_response}`);
+                this.messages.push({role: "assistant", content: agent_response});
+                return agent_response;
+            } else {
+                // Handle the case when no choices are returned
+                throw new Error("No choices returned from openai");
+            }
+        } catch (error) {
+            // Handle any errors that may occur
+            console.error(error);
+            return "Sorry, something went wrong. Please try again later.";
         }
     }
 
-    // Método para resetear el historial (manteniendo el contexto del sistema)
-    resetHistory() {
-        const systemMessage = this.messages[0];
-        this.messages = [systemMessage];
+    async make_openai_call_completion(text) {
+        try {
+            const response = await this.openai.completions.create({
+              model: "text-davinci-003",
+              prompt: text,
+              temperature: 1,
+              max_completion_tokens: 256,
+              top_p: 1,
+              frequency_penalty: 0,
+              presence_penalty: 0,
+            });
+
+            // Check if response has choices
+            if (response.choices) {
+                let agent_response = response.choices[0].text;
+                console.log(`Agent Response: ${agent_response}`);
+                return agent_response;
+            } else {
+                // Handle the case when no choices are returned
+                throw new Error("No choices returned from openai");
+            }
+        } catch (error) {
+            // Handle any errors that may occur
+            console.error(error);
+            return "Sorry, something went wrong. Please try again later.";
+        }
     }
 }
-
-export default OpenAIOperations;
