@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 import tmi from 'tmi.js';
-import OpenAIOperations from './openai_operations.js'; // Asegúrate de la extensión .js
+import OpenAIOperations from './openai_operations.js';
 
 dotenv.config();
 
 const openaiOps = new OpenAIOperations();
 
-// 🔹 HISTORIAL DEL CHAT (guardamos objeto con usuario y mensaje)
+// 🔹 HISTORIAL DEL CHAT
 let chatHistory = [];
-const CHAT_HISTORY_LIMIT = 30; // Aumentado para mejor contexto
+const CHAT_HISTORY_LIMIT = 30;
 
 // Configuración del bot
 const bot = new tmi.Client({
@@ -22,13 +22,12 @@ const bot = new tmi.Client({
 
 bot.connect();
 
-// Evento cuando llega un mensaje
 bot.on('message', async (channel, user, message, self) => {
     if (self) return;
 
     console.log(`${user.username}: ${message}`);
 
-    // 🔹 GUARDAR TODOS LOS MENSAJES (incluyendo comandos, para contexto completo)
+    // Guardar mensaje en historial
     const isCommand = message.startsWith('!');
     chatHistory.push({
         username: user.username,
@@ -37,12 +36,11 @@ bot.on('message', async (channel, user, message, self) => {
         isCommand: isCommand
     });
 
-    // Limitar tamaño del historial
     if (chatHistory.length > CHAT_HISTORY_LIMIT) {
         chatHistory.shift();
     }
 
-    // 🔹 COMANDO !benito
+    // Comando !benito
     if (message.startsWith('!benito')) {
         const text = message.replace('!benito', '').trim();
 
@@ -52,7 +50,6 @@ bot.on('message', async (channel, user, message, self) => {
         }
 
         try {
-            // 🔹 CONSTRUIR CONTEXTO MEJORADO
             const recentMessages = chatHistory
                 .slice(-15)
                 .filter(msg => !msg.isCommand)
@@ -60,16 +57,13 @@ bot.on('message', async (channel, user, message, self) => {
                 .join('\n');
 
             const contextoCompleto = `
-Este es el historial de la conversación en el chat de Twitch (los mensajes más recientes aparecen abajo):
-
+Historial del chat:
 ${recentMessages || "(No hay mensajes recientes)"}
 
-Ahora el usuario ${user.username} pregunta: "${text}"
+Usuario ${user.username} pregunta: "${text}"
 
-INSTRUCCIÓN IMPORTANTE: Responde basándote en el historial del chat de arriba. Si el usuario pregunta sobre algo que se dijo antes, busca en el historial y responde con precisión. Si no encuentras la información, responde honestamente que no lo sabes.
-
-Respuesta de Benito:
-            `;
+Responde basándote en el historial. Si pregunta sobre algo dicho antes, búscalo y responde con precisión.
+`;
 
             const response = await openaiOps.make_openai_call(contextoCompleto);
             bot.say(channel, response);

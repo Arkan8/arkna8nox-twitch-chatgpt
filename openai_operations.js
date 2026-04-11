@@ -1,3 +1,5 @@
+import OpenAI from 'openai';
+
 const OpenAI = require("openai");
 
 class OpenAIOperations {
