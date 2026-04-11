@@ -1,6 +1,8 @@
-require('dotenv').config();
-const tmi = require('tmi.js');
-const OpenAIOperations = require('./openai_operations');
+import dotenv from 'dotenv';
+import tmi from 'tmi.js';
+import OpenAIOperations from './openai_operations.js'; // Asegúrate de la extensión .js
+
+dotenv.config();
 
 const openaiOps = new OpenAIOperations();
 
@@ -27,7 +29,6 @@ bot.on('message', async (channel, user, message, self) => {
     console.log(`${user.username}: ${message}`);
 
     // 🔹 GUARDAR TODOS LOS MENSAJES (incluyendo comandos, para contexto completo)
-    // Pero marcamos si es comando para posible filtrado
     const isCommand = message.startsWith('!');
     chatHistory.push({
         username: user.username,
@@ -52,10 +53,9 @@ bot.on('message', async (channel, user, message, self) => {
 
         try {
             // 🔹 CONSTRUIR CONTEXTO MEJORADO
-            // Tomamos los últimos 15 mensajes (excluyendo comandos si prefieres, o incluyéndolos)
             const recentMessages = chatHistory
-                .slice(-15) // últimos 15 mensajes
-                .filter(msg => !msg.isCommand) // Opcional: quita esta línea si quieres incluir comandos anteriores
+                .slice(-15)
+                .filter(msg => !msg.isCommand)
                 .map(msg => `${msg.username}: ${msg.message}`)
                 .join('\n');
 
@@ -72,8 +72,6 @@ Respuesta de Benito:
             `;
 
             const response = await openaiOps.make_openai_call(contextoCompleto);
-
-            // Enviar respuesta al chat
             bot.say(channel, response);
 
         } catch (error) {
